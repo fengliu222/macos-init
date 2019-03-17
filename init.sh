@@ -45,8 +45,8 @@ cask_install google-backup-and-sync
 cask_install the-unarchiver
 cask_install wechat
 cask_install telegram
-cask_install cleanmymac
-cask_install evernote
+#cask_install cleanmymac
+#cask_install evernote
 cask_install sketch
 cask_install microsoft-office
 cask_install xmind-zen
@@ -64,7 +64,7 @@ cask_install wechatwebdevtools
 brew install neovim
 cask_install virtualbox && cask_install virtualbox-extension-pack
 cask_install docker && cask_install kitematic
-brew install yubikey-personalization ykman
+#brew install yubikey-personalization ykman
 
 ## for Appstore
 # todo
@@ -91,6 +91,11 @@ curl -sSL https://get.rvm.io | bash -s stable
 rvm install ruby-2.5.1
 rvm use 2.5.1 --default
 gem install acs2aws heel
+
+## bazel
+brew tap bazelbuild/tap
+brew tap-pin bazelbuild/tap
+brew install bazelbuild/tap/bazel
 
 ## nodejs
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
@@ -122,13 +127,13 @@ brew install clojure
 brew install terraform
 
 ## rust
-curl https://sh.rustup.rs -sSf | sh
-source $HOME/.cargo/env
+#curl https://sh.rustup.rs -sSf | sh
+#source $HOME/.cargo/env
 
 # julia
-curl -L https://julialang-s3.julialang.org/bin/mac/x64/1.0/julia-1.0.0-mac64.dmg -o "$HOME/Downloads/julia.dmg"
-hdiutil attach ~/Downloads/julia.dmg && cp -rf /Volumes/Julia-*/Julia-*.app /Applications
-hdiutil detach -force /Volumes/Julia*
+#curl -L https://julialang-s3.julialang.org/bin/mac/x64/1.0/julia-1.0.0-mac64.dmg -o "$HOME/Downloads/julia.dmg"
+#hdiutil attach ~/Downloads/julia.dmg && cp -rf /Volumes/Julia-*/Julia-*.app /Applications
+#hdiutil detach -force /Volumes/Julia*
 
 ## ethereum
 cask_install mist
