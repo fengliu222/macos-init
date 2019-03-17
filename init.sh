@@ -31,11 +31,10 @@ cask_install java
 brew install awscli
 cask_install google-cloud-sdk
 brew install kubernetes-cli kubernetes-helm
-mkdir -p $HOME/bin && curl -o $HOME/bin/aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-07-26/bin/darwin/amd64/aws-iam-authenticator && chmod +x $HOME/bin/aws-iam-authenticator
 echo "---- Begin Install Apps ----"
 cask_install squirrel
 cask_install google-chrome
-cask_install firefox
+#cask_install firefox
 cask_install 1password
 cask_install visual-studio-code
 cask_install dash
@@ -105,6 +104,7 @@ export NVM_DIR="$HOME/.nvm"
 nvm install node
 nvm use node --default
 npm install -g yarn
+cask_install react-native-debugger
 
 ## python
 brew install pyenv
