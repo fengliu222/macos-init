@@ -126,6 +126,10 @@ brew install clojure
 ## Terraform
 brew install terraform
 
+## powershell
+cask_install powershell
+
+
 ## rust
 #curl https://sh.rustup.rs -sSf | sh
 #source $HOME/.cargo/env
