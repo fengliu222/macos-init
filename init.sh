@@ -24,7 +24,7 @@ brew tap ethereum/ethereum
 echo "---- Begin Install Packages ----"
 brew install zsh git curl wget sqlite watchman coreutils automake autoconf openssl libyaml readline libxslt libtool libxml2 webp openssl pkg-config
 brew install libpq && brew link --force libpq
-brew install exa prettyping nmap glances jq thefuck ccat youtube-dl gnupg p7zip xz imagemagick hub
+brew install exa prettyping nmap glances jq thefuck bat fzf ripgrep youtube-dl gnupg p7zip xz imagemagick hub
 cask_install java
 
 ## Cloud Providers
