@@ -9,5 +9,5 @@ download and install applications for custom
 * Open `Terminal.app`
 
 ```
-curl -OL https://raw.githubusercontent.com/oortcast/macos-init/master/init.sh && chmod +x init.sh && caffeinate -s init.sh
+curl -OL https://raw.githubusercontent.com/oortcast/macos-init/master/init.sh && chmod +x ./init.sh && caffeinate -s ./init.sh
 ```
