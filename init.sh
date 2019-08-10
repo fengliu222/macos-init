@@ -1,75 +1,117 @@
 #!/usr/bin/env bash
+#/ Usage: init.sh 
+#/ Install Common software on macOS.
+
 
 fail_color="\033[31;1m"
 pass_color="\033[32;1m"
 color_end="\033[0m"
 
+ask() {
+    # https://gist.github.com/davejamesmiller/1965569
+    local prompt default reply
+
+    if [ "${2:-}" = "Y" ]; then
+        prompt="Y/n"
+        default=Y
+    elif [ "${2:-}" = "N" ]; then
+        prompt="y/N"
+        default=N
+    else
+        prompt="y/n"
+        default=
+    fi
+
+    while true; do
+
+        # Ask the question (not using "read -p" as it uses stderr not stdout)
+        echo -n "$1 [$prompt] "
+
+        # Read the answer (use /dev/tty in case stdin is redirected from somewhere else)
+        read reply </dev/tty
+
+        # Default?
+        if [ -z "$reply" ]; then
+            reply=$default
+        fi
+
+        # Check if the reply is valid
+        case "$reply" in
+            Y*|y*) return 0 ;;
+            N*|n*) return 1 ;;
+        esac
+
+    done
+}
+
+success() { printf "%b$* %b\n" "$pass_color" "$color_end" >&2; }
+abort() { printf "%b[FAILED] $* %b\n" "$fail_color" "$color_end" >&2; exit 1; }
 cask_install () {
    if brew cask install $1 ; then
-      printf "%b$1 installed successfully.%b\n" "$pass_color" "$color_end"
+      success "$1 installed successfully."
    else
       printf "[FAILED] $1\n" >> ~/CastInstallError.log
       printf "%b$1 installation failed.%b\n" "$fail_color" "$color_end"
    fi
 }
 
-## Freed0m:)
-cask_install surge
+MACOS_VERSION="$(sw_vers -productVersion)"
+  echo "$MACOS_VERSION" | grep $Q -E "^10.(14|15)" || {
+  abort "macOS version must be 10.14/15."
+}
 
-brew tap "homebrew/services"
+[ "$USER" = "root" ] && abort "Run init.sh as yourself, not root."
+groups | grep $Q admin || abort "Add $USER to the admin group."
+
+cat << "EOF"
+   ____             _                _   
+  / __ \           | |              | |  
+ | |  | | ___  _ __| |_ ___ __ _ ___| |_ 
+ | |  | |/ _ \| '__| __/ __/ _` / __| __|
+ | |__| | (_) | |  | || (_| (_| \__ \ |_ 
+  \____/ \___/|_|   \__\___\__,_|___/\__|
+
+ [https://github.com/oortcast/macos-init]                                                                                                 
+
+EOF
+success "Runing system test ...... PASS"
+printf "\nStart installing Common library:\n\n"
+
+echo "› Check macOS update"
+softwareupdate -i -a
+
+
+if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
+  test -d "${xpath}" && test -x "${xpath}" ; then
+  success "› Skipping Xcode Command Line Tools installation"
+else
+  echo "› xcode-select --install"
+  xcode-select --install
+fi
+
+
+if which brew >/dev/null 2>&1; then
+  brew config
+  success "› Skipping Homebrew installation"
+else
+  echo "› /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)""
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
+
+brew tap homebrew/services
 brew tap homebrew/cask-fonts
-brew tap ethereum/ethereum
+brew tap homebrew/cask-versions
 
+brew install zsh coreutils git curl wget openssl jq mas thefuck exa hub bat fzf ripgrep prettyping glances
 
-echo "---- Begin Install Packages ----"
-brew install zsh git curl wget sqlite watchman coreutils automake autoconf openssl libyaml readline libxslt libtool libxml2 webp openssl pkg-config
-brew install libpq && brew link --force libpq
-brew install exa prettyping nmap glances jq thefuck bat fzf ripgrep youtube-dl gnupg p7zip xz imagemagick hub
+printf "\nStart installing Common app:\n\n"
 cask_install java
-
-## Cloud Providers
-brew install awscli
-cask_install google-cloud-sdk
-brew install kubernetes-cli kubernetes-helm
-echo "---- Begin Install Apps ----"
-cask_install squirrel
 cask_install google-chrome
-#cask_install firefox
+cask_install microsoft-teams
 cask_install 1password
-cask_install visual-studio-code
-cask_install dash
-cask_install slack
-cask_install zoomus
 cask_install google-backup-and-sync
-cask_install the-unarchiver
 cask_install wechat
 cask_install telegram
-#cask_install cleanmymac
-#cask_install evernote
-cask_install sketch
-cask_install microsoft-office
-cask_install xmind-zen
-cask_install gpg-suite
-#cask_install steam
-
-## IDE
-cask_install rubymine
-cask_install webstorm
-cask_install pycharm
-cask_install goland
-cask_install intellij-idea
-cask_install datagrip
-cask_install wechatwebdevtools
-brew install neovim
-cask_install virtualbox && cask_install virtualbox-extension-pack
-cask_install docker && cask_install kitematic
-#brew install yubikey-personalization ykman
-
-## for Appstore
-# todo
-# brew install mas
-
-## font
 cask_install skyfonts
 cask_install font-noto-sans-cjk
 cask_install font-noto-serif-cjk
@@ -78,68 +120,90 @@ cask_install font-source-code-pro
 cask_install font-roboto
 cask_install font-raleway
 
-
-echo "---- Customizing ----"
+if [[ -f ~/.zshrc ]]
+then
+  success "› Skipping oh-my-zsh installation"
+else
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-wget https://raw.githubusercontent.com/AffanIndo/sunaku-zen/master/sunaku-zen.zsh-theme -o ~/.oh-my-zsh/custom/themes/sunaku-zen.zsh-theme
-echo "---- Language Env  ----"
+wget -O ~/.oh-my-zsh/custom/themes/sunaku-zen.zsh-theme  https://raw.githubusercontent.com/AffanIndo/sunaku-zen/master/sunaku-zen.zsh-theme
+wget -O  ~./.zshrc https://gist.githubusercontent.com/0xDing/8c46593df591af9e11d5fad397d7ec7c/raw/5c3d3bdcbd33cf6eb002e93fba4f0c55636a7dce/.zshrc
+fi
+
+if ask "Do you want install Sketch?"; then
+cask_install sketch
+fi
+
+if ask "Do you want install development environment?"; then
+brew install sqlite watchman coreutils automake autoconf libyaml readline libxslt libtool libxml2 webp pkg-config gnupg p7zip xz imagemagick
+brew install libpq && brew link --force libpq
+cask_install google-cloud-sdk
+brew install kubernetes-cli kubernetes-helm
+cask_install visual-studio-code
+cask_install docker && cask_install kitematic
+cask_install jetbrains-toolbox
+
 ## ruby
+if [ `ruby -v | grep "2.6" | wc -l` = 1 ]; then
+  success "› Skipping ruby installation"
+else
 curl -sSL https://rvm.io/mpapis.asc | gpg --import -
 curl -sSL https://get.rvm.io | bash -s stable
 . ~/.bash_profile
-rvm install ruby-2.5.1
-rvm use 2.5.1 --default
+rvm install ruby-2.6.3
+rvm use 2.6.3 --default
 gem install acs2aws heel
+fi
 
-## bazel
-brew tap bazelbuild/tap
-brew tap-pin bazelbuild/tap
-brew install bazelbuild/tap/bazel
 
 ## nodejs
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+if which nvm >/dev/null 2>&1; then
+success "› Skipping nodejs installation"
+else
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 nvm install node
 nvm use node --default
 npm install -g yarn
+fi
 cask_install react-native-debugger
 
+## Terraform
+if which terraform >/dev/null 2>&1; then
+success "› Skipping terraform installation"
+else
+brew install terraform
+fi
+
 ## python
+if which pyenv >/dev/null 2>&1; then
+success "› Skipping python installation"
+else
 brew install pyenv
 pyenv install 3.7.1
 pyenv global 3.7.1
-
-## go
-brew install go
-
-## scala
-brew install scala
-
-## groovy
-brew install groovy
-
-## clojure
-brew install clojure
-
-## Terraform
-brew install terraform
-
-## powershell
-cask_install powershell
+fi
 
 
 ## rust
-#curl https://sh.rustup.rs -sSf | sh
-#source $HOME/.cargo/env
+if which rustc >/dev/null 2>&1; then
+success "› Skipping python installation"
+else
+curl https://sh.rustup.rs -sSf | sh
+source $HOME/.cargo/env
+fi
 
-# julia
-#curl -L https://julialang-s3.julialang.org/bin/mac/x64/1.0/julia-1.0.0-mac64.dmg -o "$HOME/Downloads/julia.dmg"
-#hdiutil attach ~/Downloads/julia.dmg && cp -rf /Volumes/Julia-*/Julia-*.app /Applications
-#hdiutil detach -force /Volumes/Julia*
+## go
+#brew install go
 
-## ethereum
-cask_install mist
-brew install solidity
-brew install ethereum
+## scala
+#brew install scala
+
+## powershell
+#cask_install powershell
+fi
+
+success "Your macos has completed initialization. Vist https://portal.manage.microsoft.com/devices to get started now";
+/usr/bin/open -a "/Applications/Google Chrome.app" 'https://portal.manage.microsoft.com/devices'
+exit 0;
