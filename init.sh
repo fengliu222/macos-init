@@ -151,7 +151,7 @@ curl -sSL https://get.rvm.io | bash -s stable
 . ~/.bash_profile
 rvm install ruby-2.6.3
 rvm use 2.6.3 --default
-gem install acs2aws heel
+gem install heel
 fi
 
 
