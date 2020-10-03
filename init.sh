@@ -104,6 +104,7 @@ brew tap homebrew/cask-versions
 
 brew install zsh coreutils git curl wget openssl jq mas thefuck exa hub bat fzf ripgrep prettyping glances
 
+cask_install WebPQuickLook
 printf "\nStart installing Common app:\n\n"
 cask_install java
 cask_install google-chrome
