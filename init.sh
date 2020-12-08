@@ -134,7 +134,7 @@ cask_install sketch
 fi
 
 if ask "Do you want install development environment?"; then
-brew install sqlite watchman coreutils automake autoconf libyaml readline libxslt libtool libxml2 webp pkg-config gnupg p7zip xz imagemagick
+brew install sqlite watchman coreutils automake autoconf libyaml readline libxslt libtool libxml2 webp pkg-config gnupg p7zip xz imagemagick aliyun-cli
 brew install libpq && brew link --force libpq
 cask_install google-cloud-sdk
 brew install kubernetes-cli kubernetes-helm
@@ -143,14 +143,14 @@ cask_install docker && cask_install kitematic
 cask_install jetbrains-toolbox
 
 ## ruby
-if [ `ruby -v | grep "2.6" | wc -l` = 1 ]; then
+if [ `ruby -v | grep "2.7" | wc -l` = 1 ]; then
   success "› Skipping ruby installation"
 else
 curl -sSL https://rvm.io/mpapis.asc | gpg --import -
 curl -sSL https://get.rvm.io | bash -s stable
 . ~/.bash_profile
-rvm install ruby-2.6.3
-rvm use 2.6.3 --default
+rvm install ruby-2.7.2
+rvm use 2.7.2 --default
 gem install heel
 fi
 
@@ -159,7 +159,7 @@ fi
 if which nvm >/dev/null 2>&1; then
 success "› Skipping nodejs installation"
 else
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -177,22 +177,22 @@ brew install terraform
 fi
 
 ## python
-if which pyenv >/dev/null 2>&1; then
-success "› Skipping python installation"
-else
-brew install pyenv
-pyenv install 3.7.1
-pyenv global 3.7.1
-fi
+#if which pyenv >/dev/null 2>&1; then
+#success "› Skipping python installation"
+#else
+#brew install pyenv
+#pyenv install 3.7.1
+#pyenv global 3.7.1
+#fi
 
 
 ## rust
-if which rustc >/dev/null 2>&1; then
-success "› Skipping python installation"
-else
-curl https://sh.rustup.rs -sSf | sh
-source $HOME/.cargo/env
-fi
+#if which rustc >/dev/null 2>&1; then
+#success "› Skipping python installation"
+#else
+#curl https://sh.rustup.rs -sSf | sh
+#source $HOME/.cargo/env
+#fi
 
 ## go
 #brew install go
