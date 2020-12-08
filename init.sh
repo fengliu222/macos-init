@@ -71,7 +71,7 @@ cat << "EOF"
  | |__| | (_) | |  | || (_| (_| \__ \ |_ 
   \____/ \___/|_|   \__\___\__,_|___/\__|
 
- [https://github.com/oortcast/macos-init]                                                                                                 
+ [https://github.com/brickodc/macos-init]                                                                                                 
 
 EOF
 success "Runing system test ...... PASS"
@@ -129,14 +129,9 @@ wget -O ~/.oh-my-zsh/custom/themes/sunaku-zen.zsh-theme  https://raw.githubuserc
 wget -O  ~./.zshrc https://gist.githubusercontent.com/0xDing/8c46593df591af9e11d5fad397d7ec7c/raw/5c3d3bdcbd33cf6eb002e93fba4f0c55636a7dce/.zshrc
 fi
 
-if ask "Do you want install Sketch?"; then
-cask_install sketch
-fi
-
 if ask "Do you want install development environment?"; then
 brew install sqlite watchman coreutils automake autoconf libyaml readline libxslt libtool libxml2 webp pkg-config gnupg p7zip xz imagemagick aliyun-cli
 brew install libpq && brew link --force libpq
-cask_install google-cloud-sdk
 brew install kubernetes-cli kubernetes-helm
 cask_install visual-studio-code
 cask_install docker && cask_install kitematic
