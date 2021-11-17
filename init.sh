@@ -56,8 +56,8 @@ cask_install () {
 }
 
 MACOS_VERSION="$(sw_vers -productVersion)"
-  echo "$MACOS_VERSION" | grep $Q -E "^11.(2|3)" || {
-  abort "macOS version must be 11.2/3."
+  echo "$MACOS_VERSION" | grep $Q -E "^11.(2|3)|^12." || {
+  abort "macOS version must be 11.2/3. or 12.x"
 }
 
 [ "$USER" = "root" ] && abort "Run init.sh as yourself, not root."
